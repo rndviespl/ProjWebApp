@@ -17,8 +17,6 @@ public partial class Bro2testProduct
 
     public string? Bro2testDescription { get; set; }
 
-    public string? Bro2testImageUrl { get; set; }
-
     public DateTime? Bro2testDateAdded { get; set; }
 
     public int? Bro2testCategoryId { get; set; }
@@ -26,6 +24,8 @@ public partial class Bro2testProduct
     public virtual ICollection<Bro2testCartItem> Bro2testCartItems { get; set; } = new List<Bro2testCartItem>();
 
     public virtual Bro2testCategory? Bro2testCategory { get; set; }
+
+    public virtual ICollection<Bro2testImage> Bro2testImages { get; set; } = new List<Bro2testImage>();
 
     public virtual ICollection<Bro2testOrderComposition> Bro2testOrderCompositions { get; set; } = new List<Bro2testOrderComposition>();
 

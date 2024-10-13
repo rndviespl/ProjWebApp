@@ -1,3 +1,5 @@
 ﻿скафолд
 
  Scaffold-DbContext 'Data Source=166.1.201.241; uid=BrosShopAdm;pwd=BrosShopAdmin; database=bro2test;' -Provider Pomelo.EntityFrameworkCore.MySql -ContextDir Data -Context ApplicationContext -OutputDir Models -Force
+ 
+

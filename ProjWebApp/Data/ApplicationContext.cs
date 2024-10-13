@@ -27,6 +27,8 @@ public partial class ApplicationContext : DbContext
 
     public virtual DbSet<Bro2testDiscount> Bro2testDiscounts { get; set; }
 
+    public virtual DbSet<Bro2testImage> Bro2testImages { get; set; }
+
     public virtual DbSet<Bro2testNotification> Bro2testNotifications { get; set; }
 
     public virtual DbSet<Bro2testOrder> Bro2testOrders { get; set; }
@@ -169,6 +171,26 @@ public partial class ApplicationContext : DbContext
                 .HasColumnName("bro2test_StartDate");
         });
 
+        modelBuilder.Entity<Bro2testImage>(entity =>
+        {
+            entity.HasKey(e => e.Bro2testImageId).HasName("PRIMARY");
+
+            entity.ToTable("bro2test_Image");
+
+            entity.HasIndex(e => e.Bro2testProductId, "fk_bro2test_Image_bro2test_Product1_idx");
+
+            entity.Property(e => e.Bro2testImageId).HasColumnName("bro2test_ImageId");
+            entity.Property(e => e.Bro2testImage1)
+                .HasColumnType("blob")
+                .HasColumnName("bro2test_Image");
+            entity.Property(e => e.Bro2testProductId).HasColumnName("bro2test_ProductId");
+
+            entity.HasOne(d => d.Bro2testProduct).WithMany(p => p.Bro2testImages)
+                .HasForeignKey(d => d.Bro2testProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("bro2test_Product");
+        });
+
         modelBuilder.Entity<Bro2testNotification>(entity =>
         {
             entity.HasKey(e => e.Bro2testNotificationId).HasName("PRIMARY");
@@ -294,9 +316,6 @@ public partial class ApplicationContext : DbContext
             entity.Property(e => e.Bro2testDiscountPercent)
                 .HasDefaultValueSql("'0'")
                 .HasColumnName("bro2test_DiscountPercent");
-            entity.Property(e => e.Bro2testImageUrl)
-                .HasMaxLength(255)
-                .HasColumnName("bro2test_ImageURL");
             entity.Property(e => e.Bro2testPrice)
                 .HasPrecision(10, 2)
                 .HasColumnName("bro2test_Price");
