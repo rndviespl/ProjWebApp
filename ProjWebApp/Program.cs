@@ -3,6 +3,7 @@ using ProjWebApp.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace ProjWebApp
 {
@@ -12,7 +13,10 @@ namespace ProjWebApp
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 10485760; // 10 MB
+            });
             builder.Services.AddDbContext<ApplicationContext>(options =>
             options.UseMySql("data source=166.1.201.241;uid=BrosShopAdm;pwd=BrosShopAdmin;database=bro2test",
             Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.39-mysql")));
@@ -20,6 +24,8 @@ namespace ProjWebApp
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
+
+           
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

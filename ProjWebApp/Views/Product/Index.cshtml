@@ -1,11 +1,11 @@
 ﻿@model IEnumerable<ProjWebApp.Models.Product>
-
 @{
     ViewData["Title"] = "Product List";
 }
 
+@using System.IO
+
 <div class="text-center mb-3">
-    <!-- Кнопка для перехода на страницу продуктов -->
     <a asp-action="Index" asp-controller="Product" class="btn btn-primary">Перейти на страницу продуктов</a>
 </div>
 
@@ -18,21 +18,30 @@
             <div class="card mb-4">
                 @if (product.Images.Any())
                 {
-                    var imageBase64 = Convert.ToBase64String(product.Images.First().Image1);
-                    <img src="data:image/png;base64,@imageBase64" class="card-img-top" alt="@product.Title" />
+                    foreach (var img in product.Images)
+                    {
+                        // Извлекаем имя файла без использования Path.GetFileName
+                        var filePath = img.ImagePath;
+                        var fileName = filePath.Substring(filePath.LastIndexOf('\\') + 1); // Извлекаем имя файла
+
+                        <img src="@Url.Content("~/scr/Images/" + fileName)" class="card-img-top" alt="@product.Title" style="height: 200px; object-fit: cover;" />
+                    }
                 }
                 else
                 {
-                    <img src="~/images/default-product.png" class="card-img-top" alt="Default Image" />
+                    <img src="~/images/default-product.png" class="card-img-top" alt="Default Image" style="height: 200px; object-fit: cover;" />
                 }
+
                 <div class="card-body">
                     <h5 class="card-title">@product.Title</h5>
-                    <p class="card-text">Цена: @product.Price.ToString("C")</p>
+                    <div class="d-flex justify-content-between">
+                        <p class="card-text">Цена: @product.Price.ToString("C")</p>
+                        <p class="card-text">Категория: @product.Category?.CategoryTitle</p>
+                    </div>
                     @if (product.DiscountPercent.HasValue)
                     {
-                        <p class="card-text">Скидка: @product.DiscountPercent %</p>
+                        <p class="card-text text-danger">Скидка: @product.DiscountPercent %</p>
                     }
-                    <p class="card-text">Категория: @product.Category?.CategoryTitle</p> <!-- Предполагается, что у Category есть свойство Title -->
                     <p class="card-text">Описание: @product.Description</p>
                     <p class="card-text">Дата добавления: @product.DateAdded?.ToShortDateString()</p>
                     <div class="d-flex justify-content-between">

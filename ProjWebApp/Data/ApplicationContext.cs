@@ -17,7 +17,7 @@ public partial class ApplicationContext : DbContext
     {
     }
 
-    public virtual DbSet<AttributeProduct> Attributes { get; set; }
+    public virtual DbSet<Attribute1> Attributes { get; set; }
 
     public virtual DbSet<Cart> Carts { get; set; }
 
@@ -61,7 +61,7 @@ public partial class ApplicationContext : DbContext
             .UseCollation("utf8mb4_0900_ai_ci")
             .HasCharSet("utf8mb4");
 
-        modelBuilder.Entity<AttributeProduct>(entity =>
+        modelBuilder.Entity<Attribute1>(entity =>
         {
             entity.HasKey(e => e.AttributesId).HasName("PRIMARY");
 
@@ -154,9 +154,7 @@ public partial class ApplicationContext : DbContext
 
             entity.HasIndex(e => e.ProductId, "fk_bro2test_Image_bro2test_Product1_idx");
 
-            entity.Property(e => e.Image1)
-                .HasColumnType("blob")
-                .HasColumnName("Image");
+            entity.Property(e => e.ImagePath).HasColumnType("blob");
 
             entity.HasOne(d => d.Product).WithMany(p => p.Images)
                 .HasForeignKey(d => d.ProductId)

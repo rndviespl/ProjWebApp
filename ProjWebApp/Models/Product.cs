@@ -21,19 +21,19 @@ public partial class Product
 
     public int? CategoryId { get; set; }
 
-    public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+    public virtual ICollection<CartItem> CartItems { get; set; } = [];
 
     public virtual Category? Category { get; set; }
 
-    public virtual ICollection<Image> Images { get; set; } = new List<Image>();
+    public virtual ICollection<Image> Images { get; set; } = [];
 
-    public virtual ICollection<OrderComposition> OrderCompositions { get; set; } = new List<OrderComposition>();
+    public virtual ICollection<OrderComposition> OrderCompositions { get; set; } = [];
 
-    public virtual ICollection<ProductAttribute> ProductAttributes { get; set; } = new List<ProductAttribute>();
+    public virtual ICollection<ProductAttribute> ProductAttributes { get; set; } = [];
 
-    public virtual ICollection<Return> Returns { get; set; } = new List<Return>();
+    public virtual ICollection<Return> Returns { get; set; } = [];
 
-    public virtual ICollection<ViewHistory> ViewHistories { get; set; } = new List<ViewHistory>();
+    public virtual ICollection<ViewHistory> ViewHistories { get; set; } = [];
 
-    public virtual ICollection<Wishlist> Wishlists { get; set; } = new List<Wishlist>();
+    public virtual ICollection<Wishlist> Wishlists { get; set; } = [];
 }

@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProjWebApp.Data;
 using ProjWebApp.Models;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace ProjWebApp.Controllers
 {
@@ -13,9 +16,8 @@ namespace ProjWebApp.Controllers
         {
             _context = context;
         }
-        // GET: ProductController
-        // GET: Product
 
+        // GET: Product
         public IActionResult Index(string searchString, int? categoryId)
         {
             var products = _context.Products.Include(p => p.Category).AsQueryable();
@@ -34,40 +36,110 @@ namespace ProjWebApp.Controllers
             return View(products.ToList());
         }
 
-
         // GET: Product/Details/5
         public IActionResult Details(int id)
         {
             var product = _context.Products
-                .Include(p => p.ProductAttributes) // Включение атрибутов продукта
+                .Include(p => p.ProductAttributes)
                 .FirstOrDefault(p => p.ProductId == id);
 
             if (product == null)
             {
-                return NotFound(); // Возвращает 404, если продукт не найден
+                return NotFound();
             }
 
-            return View(product); // Возвращает представление "Details" с продуктом
+            return View(product);
         }
 
         // GET: Product/Create
         public IActionResult Create()
         {
-            return View(); // Возвращает представление "Create"
+            ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Title");
+            return View();
         }
 
-        // POST: Product/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Product product)
+        public async Task<IActionResult> Create(Product product, IFormFile[] ImageFiles)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Products.Add(product); // Добавление нового продукта
-                _context.SaveChanges(); // Сохранение изменений в базе данных
-                return RedirectToAction(nameof(Index)); // Перенаправление на метод Index
+                // Проверяем валидность модели
+                if (ModelState.IsValid)
+                {
+                    // Папка для загрузки изображений
+                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "Scr", "Images");
+
+                    // Проверяем, существует ли папка, если нет - создаем
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+
+                    // Разрешенные расширения файлов
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+
+                    if (ImageFiles != null && ImageFiles.Length > 0)
+                    {
+                        // Обрабатываем каждое загруженное изображение
+                        foreach (var imageFile in ImageFiles)
+                        {
+                            if (imageFile.Length > 0)
+                            {
+                                var fileExtension = Path.GetExtension(imageFile.FileName).ToLower();
+
+                                // Проверяем, является ли файл допустимым изображением
+                                if (!allowedExtensions.Contains(fileExtension))
+                                {
+                                    ModelState.AddModelError("", "Недопустимый формат файла. Пожалуйста, загрузите изображение в формате JPG, PNG или GIF.");
+                                    continue; // Пропускаем этот файл
+                                }
+
+                                var fileName = Path.GetFileName(imageFile.FileName);
+                                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                                // Проверяем, существует ли файл с таким именем
+                                if (System.IO.File.Exists(filePath))
+                                {
+                                    ModelState.AddModelError("", $"Файл с именем {fileName} уже существует.");
+                                    continue; // Пропускаем этот файл
+                                }
+
+                                // Сохраняем изображение на сервере
+                                using (var stream = new FileStream(filePath, FileMode.Create))
+                                {
+                                    await imageFile.CopyToAsync(stream);
+                                }
+
+                                // Создание объекта изображения и привязка к продукту
+                                var image = new Image
+                                {
+                                    ImagePath = filePath, // Сохраняем полный путь изображения
+                                    ProductId = product.ProductId // Предполагается, что product.ProductId уже установлен
+                                };
+                                product.Images.Add(image);
+                            }
+                        }
+                    }
+
+                    // Устанавливаем дату добавления товара
+                    product.DateAdded = DateTime.Now;
+
+                    // Добавляем продукт в контекст базы данных
+                    _context.Products.Add(product);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+
+                ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Title", product.CategoryId);
+                return View(product);
             }
-            return View(product); // Возвращает представление "Create" с ошибками валидации
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Произошла ошибка: " + ex.Message);
+                ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Title", product.CategoryId);
+                return View(product);
+            }
         }
 
         // GET: Product/Edit/5
@@ -76,9 +148,10 @@ namespace ProjWebApp.Controllers
             var product = _context.Products.Find(id);
             if (product == null)
             {
-                return NotFound(); // Возвращает 404, если продукт не найден
+                return NotFound();
             }
-            return View(product); // Возвращает представление "Edit" с продуктом
+            ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Title", product.CategoryId);
+            return View(product);
         }
 
         // POST: Product/Edit/5
@@ -88,30 +161,31 @@ namespace ProjWebApp.Controllers
         {
             if (id != product.ProductId)
             {
-                return BadRequest(); // Возвращает 400 Bad Request
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(product); // Обновление продукта
-                    _context.SaveChanges(); // Сохранение изменений в базе данных
+                    _context.Update(product);
+                    _context.SaveChanges();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!_context.Products.Any(e => e.ProductId == id))
                     {
-                        return NotFound(); // Возвращает 404, если продукт не найден
+                        return NotFound();
                     }
                     else
                     {
-                        throw; // Пробрасывает исключение, если произошла ошибка
+                        throw;
                     }
                 }
-                return RedirectToAction(nameof(Index)); // Перенаправление на метод Index
+                return RedirectToAction(nameof(Index));
             }
-            return View(product); // Возвращает представление "Edit" с ошибками валидации
+            ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "Title", product.CategoryId);
+            return View(product);
         }
 
         // GET: Product/Delete/5
@@ -120,9 +194,9 @@ namespace ProjWebApp.Controllers
             var product = _context.Products.Find(id);
             if (product == null)
             {
-                return NotFound(); // Возвращает 404, если продукт не найден
+                return NotFound();
             }
-            return View(product); // Возвращает представление "Delete" с продуктом
+            return View(product);
         }
 
         // POST: Product/Delete/5
@@ -133,10 +207,10 @@ namespace ProjWebApp.Controllers
             var product = _context.Products.Find(id);
             if (product != null)
             {
-                _context.Products.Remove(product); // Удаление продукта
-                _context.SaveChanges(); // Сохранение изменений в базе данных
+                _context.Products.Remove(product);
+                _context.SaveChanges();
             }
-            return RedirectToAction(nameof(Index)); // Перенаправление на метод Index
+            return RedirectToAction(nameof(Index));
         }
     }
 }

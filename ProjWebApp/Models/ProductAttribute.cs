@@ -13,7 +13,7 @@ public partial class ProductAttribute
 
     public string? Description { get; set; }
 
-    public virtual AttributeProduct Attributes { get; set; } = null!;
+    public virtual Attribute1 Attributes { get; set; } = null!;
 
     public virtual Product Product { get; set; } = null!;
 }
