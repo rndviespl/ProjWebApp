@@ -16,16 +16,24 @@ namespace ProjWebApp.Controllers
         // GET: ProductController
         // GET: Product
 
-        public IActionResult Index()
+        public IActionResult Index(string searchString, int? categoryId)
         {
-            var products = _context.Products.ToList(); // Получение списка продуктов
-            if (products == null || !products.Any())
+            var products = _context.Products.Include(p => p.Category).AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
             {
-                // Логирование или отладка
-                Console.WriteLine("No products found.");
+                products = products.Where(p => p.Title.Contains(searchString));
             }
-            return View(products); // Возвращает представление "Index" с продуктами
+
+            if (categoryId.HasValue)
+            {
+                products = products.Where(p => p.CategoryId == categoryId.Value);
+            }
+
+            ViewBag.Categories = _context.Categories.ToList();
+            return View(products.ToList());
         }
+
 
         // GET: Product/Details/5
         public IActionResult Details(int id)
@@ -63,7 +71,7 @@ namespace ProjWebApp.Controllers
         }
 
         // GET: Product/Edit/5
-        public IActionResult Edit(int id)
+        public IActionResult Update(int id)
         {
             var product = _context.Products.Find(id);
             if (product == null)
@@ -76,7 +84,7 @@ namespace ProjWebApp.Controllers
         // POST: Product/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Product product)
+        public IActionResult Update(int id, Product product)
         {
             if (id != product.ProductId)
             {

@@ -4,37 +4,48 @@
     ViewData["Title"] = "Product List";
 }
 
+<div class="text-center mb-3">
+    <!-- Кнопка для перехода на страницу продуктов -->
+    <a asp-action="Index" asp-controller="Product" class="btn btn-primary">Перейти на страницу продуктов</a>
+</div>
+
 <h1>@ViewData["Title"]</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Price</th>
-            <th>Discount</th>
-            <th>Description</th>
-            <th>Date Added</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var product in Model)
-        {
-            <tr>
-                <td>@product.Title</td>
-                <td>@product.Price</td>
-                <td>@product.DiscountPercent</td>
-                <td>@product.Description</td>
-                <td>@product.DateAdded?.ToShortDateString()</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@product.ProductId">Details</a> |
-                    <a asp-action="Edit" asp-route-id="@product.ProductId">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@product.ProductId">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="row">
+    @foreach (var product in Model)
+    {
+        <div class="col-md-4">
+            <div class="card mb-4">
+                @if (product.Images.Any())
+                {
+                    var imageBase64 = Convert.ToBase64String(product.Images.First().Image1);
+                    <img src="data:image/png;base64,@imageBase64" class="card-img-top" alt="@product.Title" />
+                }
+                else
+                {
+                    <img src="~/images/default-product.png" class="card-img-top" alt="Default Image" />
+                }
+                <div class="card-body">
+                    <h5 class="card-title">@product.Title</h5>
+                    <p class="card-text">Цена: @product.Price.ToString("C")</p>
+                    @if (product.DiscountPercent.HasValue)
+                    {
+                        <p class="card-text">Скидка: @product.DiscountPercent %</p>
+                    }
+                    <p class="card-text">Категория: @product.Category?.CategoryTitle</p> <!-- Предполагается, что у Category есть свойство Title -->
+                    <p class="card-text">Описание: @product.Description</p>
+                    <p class="card-text">Дата добавления: @product.DateAdded?.ToShortDateString()</p>
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-info">Details</a>
+                        <a asp-action="Update" asp-route-id="@product.ProductId" class="btn btn-warning">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@product.ProductId" class="btn btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
-<a asp-action="Create">Create New Product</a>
-<a asp-action="Create">Create New Product</a>
+<div class="text-center">
+    <a asp-action="Create" class="btn btn-success">Create New Product</a>
+</div>

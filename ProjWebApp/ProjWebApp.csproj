@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Product\Delete.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.10" />
@@ -23,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Src\Images\" />
     <Folder Include="Views\Pages\" />
     <Folder Include="Views\Shared\" />
     <Folder Include="Views\Cart\" />
@@ -43,6 +48,18 @@
     <Folder Include="wwwroot\lib\jquery\" />
     <Folder Include="wwwroot\lib\jquery\dist\" />
     <Folder Include="ViewModels\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Product\Delete.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Product\Delete.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Product\Delete.cshtml" />
   </ItemGroup>
 
 </Project>

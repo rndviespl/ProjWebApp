@@ -46,8 +46,11 @@ namespace ProjWebApp
                     name: "product",
                     pattern: "{controller=Product}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute(
-                    name: "product",
+                    name: "product_create",
                     pattern: "{controller=Product}/{action=Create}/{id?}");
+                endpoints.MapControllerRoute(
+                   name: "product_update",
+                   pattern: "{controller=Product}/{action=Update}/{id?}");
 
                 endpoints.MapControllerRoute(
                     name: "test",
