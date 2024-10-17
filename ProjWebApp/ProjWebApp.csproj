@@ -23,10 +23,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
     <Folder Include="Views\Pages\" />
     <Folder Include="Views\Shared\" />
+    <Folder Include="Views\Cart\" />
+    <Folder Include="Views\Order\" />
+    <Folder Include="Views\User\" />
+    <Folder Include="Views\Wishlist\" />
+    <Folder Include="Views\Notification\" />
+    <Folder Include="Views\Review\" />
+    <Folder Include="Views\Return\" />
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\js\" />
@@ -37,6 +42,7 @@
     <Folder Include="wwwroot\lib\jquery-validation\dist\" />
     <Folder Include="wwwroot\lib\jquery\" />
     <Folder Include="wwwroot\lib\jquery\dist\" />
+    <Folder Include="ViewModels\" />
   </ItemGroup>
 
 </Project>

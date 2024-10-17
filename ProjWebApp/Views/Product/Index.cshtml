@@ -1,0 +1,40 @@
+﻿@model IEnumerable<ProjWebApp.Models.Product>
+
+@{
+    ViewData["Title"] = "Product List";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Price</th>
+            <th>Discount</th>
+            <th>Description</th>
+            <th>Date Added</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Title</td>
+                <td>@product.Price</td>
+                <td>@product.DiscountPercent</td>
+                <td>@product.Description</td>
+                <td>@product.DateAdded?.ToShortDateString()</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@product.ProductId">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@product.ProductId">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@product.ProductId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create">Create New Product</a>
+<a asp-action="Create">Create New Product</a>

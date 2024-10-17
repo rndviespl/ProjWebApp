@@ -17,42 +17,42 @@ public partial class ApplicationContext : DbContext
     {
     }
 
-    public virtual DbSet<Bro2testAttribute> Bro2testAttributes { get; set; }
+    public virtual DbSet<AttributeProduct> Attributes { get; set; }
 
-    public virtual DbSet<Bro2testCart> Bro2testCarts { get; set; }
+    public virtual DbSet<Cart> Carts { get; set; }
 
-    public virtual DbSet<Bro2testCartItem> Bro2testCartItems { get; set; }
+    public virtual DbSet<CartItem> CartItems { get; set; }
 
-    public virtual DbSet<Bro2testCategory> Bro2testCategories { get; set; }
+    public virtual DbSet<Category> Categories { get; set; }
 
-    public virtual DbSet<Bro2testDiscount> Bro2testDiscounts { get; set; }
+    public virtual DbSet<Discount> Discounts { get; set; }
 
-    public virtual DbSet<Bro2testImage> Bro2testImages { get; set; }
+    public virtual DbSet<Image> Images { get; set; }
 
-    public virtual DbSet<Bro2testNotification> Bro2testNotifications { get; set; }
+    public virtual DbSet<Notification> Notifications { get; set; }
 
-    public virtual DbSet<Bro2testOrder> Bro2testOrders { get; set; }
+    public virtual DbSet<Order> Orders { get; set; }
 
-    public virtual DbSet<Bro2testOrderComposition> Bro2testOrderCompositions { get; set; }
+    public virtual DbSet<OrderComposition> OrderCompositions { get; set; }
 
-    public virtual DbSet<Bro2testOrderHistory> Bro2testOrderHistories { get; set; }
+    public virtual DbSet<OrderHistory> OrderHistories { get; set; }
 
-    public virtual DbSet<Bro2testProduct> Bro2testProducts { get; set; }
+    public virtual DbSet<Product> Products { get; set; }
 
-    public virtual DbSet<Bro2testProductAttribute> Bro2testProductAttributes { get; set; }
+    public virtual DbSet<ProductAttribute> ProductAttributes { get; set; }
 
-    public virtual DbSet<Bro2testReturn> Bro2testReturns { get; set; }
+    public virtual DbSet<Return> Returns { get; set; }
 
-    public virtual DbSet<Bro2testReview> Bro2testReviews { get; set; }
+    public virtual DbSet<Review> Reviews { get; set; }
 
-    public virtual DbSet<Bro2testUser> Bro2testUsers { get; set; }
+    public virtual DbSet<User> Users { get; set; }
 
-    public virtual DbSet<Bro2testViewHistory> Bro2testViewHistories { get; set; }
+    public virtual DbSet<ViewHistory> ViewHistories { get; set; }
 
-    public virtual DbSet<Bro2testWishlist> Bro2testWishlists { get; set; }
+    public virtual DbSet<Wishlist> Wishlists { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseMySql("data source=166.1.201.241;uid=BrosShopAdm;pwd=BrosShopAdmin;database=bro2test", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.39-mysql"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -61,100 +61,75 @@ public partial class ApplicationContext : DbContext
             .UseCollation("utf8mb4_0900_ai_ci")
             .HasCharSet("utf8mb4");
 
-        modelBuilder.Entity<Bro2testAttribute>(entity =>
+        modelBuilder.Entity<AttributeProduct>(entity =>
         {
-            entity.HasKey(e => e.Bro2testAttributesId).HasName("PRIMARY");
+            entity.HasKey(e => e.AttributesId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_Attributes");
+            entity.HasIndex(e => e.Color, "idx_Attributes_Color");
 
-            entity.HasIndex(e => e.Bro2testColor, "idx_Attributes_Color");
+            entity.HasIndex(e => e.Size, "idx_Attributes_Size");
 
-            entity.HasIndex(e => e.Bro2testSize, "idx_Attributes_Size");
-
-            entity.Property(e => e.Bro2testAttributesId).HasColumnName("bro2test_AttributesId");
-            entity.Property(e => e.Bro2testColor)
-                .HasMaxLength(20)
-                .HasColumnName("bro2test_Color");
-            entity.Property(e => e.Bro2testDescription)
-                .HasMaxLength(255)
-                .HasColumnName("bro2test_Description");
-            entity.Property(e => e.Bro2testSize)
-                .HasMaxLength(10)
-                .HasColumnName("bro2test_Size");
+            entity.Property(e => e.Color).HasMaxLength(20);
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.Size).HasMaxLength(10);
         });
 
-        modelBuilder.Entity<Bro2testCart>(entity =>
+        modelBuilder.Entity<Cart>(entity =>
         {
-            entity.HasKey(e => e.Bro2testCartId).HasName("PRIMARY");
+            entity.HasKey(e => e.CartId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_Cart");
+            entity.ToTable("Cart");
 
-            entity.HasIndex(e => e.Bro2testUserId, "idx_Cart_UserId");
+            entity.HasIndex(e => e.UserId, "idx_Cart_UserId");
 
-            entity.Property(e => e.Bro2testCartId).HasColumnName("bro2test_CartId");
-            entity.Property(e => e.Bro2testCreatedAt)
+            entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("datetime")
-                .HasColumnName("bro2test_CreatedAt");
-            entity.Property(e => e.Bro2testUserId).HasColumnName("bro2test_UserId");
+                .HasColumnType("datetime");
 
-            entity.HasOne(d => d.Bro2testUser).WithMany(p => p.Bro2testCarts)
-                .HasForeignKey(d => d.Bro2testUserId)
+            entity.HasOne(d => d.User).WithMany(p => p.Carts)
+                .HasForeignKey(d => d.UserId)
                 .HasConstraintName("fk_Cart_User");
         });
 
-        modelBuilder.Entity<Bro2testCartItem>(entity =>
+        modelBuilder.Entity<CartItem>(entity =>
         {
-            entity.HasKey(e => e.Bro2testCartItemId).HasName("PRIMARY");
+            entity.HasKey(e => e.CartItemId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_CartItem");
+            entity.ToTable("CartItem");
 
-            entity.HasIndex(e => e.Bro2testCartId, "idx_CartItem_CartId");
+            entity.HasIndex(e => e.CartId, "idx_CartItem_CartId");
 
-            entity.HasIndex(e => e.Bro2testProductId, "idx_CartItem_ProductId");
+            entity.HasIndex(e => e.ProductId, "idx_CartItem_ProductId");
 
-            entity.Property(e => e.Bro2testCartItemId).HasColumnName("bro2test_CartItemId");
-            entity.Property(e => e.Bro2testCartId).HasColumnName("bro2test_CartId");
-            entity.Property(e => e.Bro2testProductId).HasColumnName("bro2test_ProductId");
-            entity.Property(e => e.Bro2testQuantity)
-                .HasDefaultValueSql("'1'")
-                .HasColumnName("bro2test_Quantity");
+            entity.Property(e => e.Quantity).HasDefaultValueSql("'1'");
 
-            entity.HasOne(d => d.Bro2testCart).WithMany(p => p.Bro2testCartItems)
-                .HasForeignKey(d => d.Bro2testCartId)
+            entity.HasOne(d => d.Cart).WithMany(p => p.CartItems)
+                .HasForeignKey(d => d.CartId)
                 .HasConstraintName("fk_CartItem_Cart");
 
-            entity.HasOne(d => d.Bro2testProduct).WithMany(p => p.Bro2testCartItems)
-                .HasForeignKey(d => d.Bro2testProductId)
+            entity.HasOne(d => d.Product).WithMany(p => p.CartItems)
+                .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("fk_CartItem_Product");
         });
 
-        modelBuilder.Entity<Bro2testCategory>(entity =>
+        modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.Bro2testCategoryId).HasName("PRIMARY");
+            entity.HasKey(e => e.CategoryId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_Category");
+            entity.ToTable("Category");
 
             entity.HasIndex(e => e.ParentCategoryId, "fk_ParentCategory");
 
-            entity.HasIndex(e => e.Bro2testCategoryTitle, "idx_Category_Title");
+            entity.HasIndex(e => e.CategoryTitle, "idx_Category_Title");
 
-            entity.Property(e => e.Bro2testCategoryId).HasColumnName("bro2test_CategoryId");
-            entity.Property(e => e.Bro2testCategoryTitle)
-                .HasMaxLength(45)
-                .HasColumnName("bro2test_CategoryTitle");
-
-            entity.HasOne(d => d.ParentCategory).WithMany(p => p.InverseParentCategory)
-                .HasForeignKey(d => d.ParentCategoryId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("fk_ParentCategory");
+            entity.Property(e => e.CategoryTitle).HasMaxLength(45);
         });
 
-        modelBuilder.Entity<Bro2testDiscount>(entity =>
+        modelBuilder.Entity<Discount>(entity =>
         {
             entity.HasKey(e => e.Bro2testDiscountId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_Discount");
+            entity.ToTable("Discount");
 
             entity.HasIndex(e => e.Bro2testDiscountCode, "bro2test_DiscountCode").IsUnique();
 
@@ -171,230 +146,182 @@ public partial class ApplicationContext : DbContext
                 .HasColumnName("bro2test_StartDate");
         });
 
-        modelBuilder.Entity<Bro2testImage>(entity =>
+        modelBuilder.Entity<Image>(entity =>
         {
-            entity.HasKey(e => e.Bro2testImageId).HasName("PRIMARY");
+            entity.HasKey(e => e.ImageId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_Image");
+            entity.ToTable("Image");
 
-            entity.HasIndex(e => e.Bro2testProductId, "fk_bro2test_Image_bro2test_Product1_idx");
+            entity.HasIndex(e => e.ProductId, "fk_bro2test_Image_bro2test_Product1_idx");
 
-            entity.Property(e => e.Bro2testImageId).HasColumnName("bro2test_ImageId");
-            entity.Property(e => e.Bro2testImage1)
+            entity.Property(e => e.Image1)
                 .HasColumnType("blob")
-                .HasColumnName("bro2test_Image");
-            entity.Property(e => e.Bro2testProductId).HasColumnName("bro2test_ProductId");
+                .HasColumnName("Image");
 
-            entity.HasOne(d => d.Bro2testProduct).WithMany(p => p.Bro2testImages)
-                .HasForeignKey(d => d.Bro2testProductId)
+            entity.HasOne(d => d.Product).WithMany(p => p.Images)
+                .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("bro2test_Product");
         });
 
-        modelBuilder.Entity<Bro2testNotification>(entity =>
+        modelBuilder.Entity<Notification>(entity =>
         {
-            entity.HasKey(e => e.Bro2testNotificationId).HasName("PRIMARY");
+            entity.HasKey(e => e.NotificationId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_Notification");
+            entity.ToTable("Notification");
 
-            entity.HasIndex(e => e.Bro2testUserId, "idx_Notification_UserId");
+            entity.HasIndex(e => e.UserId, "idx_Notification_UserId");
 
-            entity.Property(e => e.Bro2testNotificationId).HasColumnName("bro2test_NotificationId");
-            entity.Property(e => e.Bro2testCreatedAt)
+            entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("datetime")
-                .HasColumnName("bro2test_CreatedAt");
-            entity.Property(e => e.Bro2testIsRead).HasColumnName("bro2test_IsRead");
-            entity.Property(e => e.Bro2testMessage)
-                .HasMaxLength(255)
-                .HasColumnName("bro2test_Message");
-            entity.Property(e => e.Bro2testUserId).HasColumnName("bro2test_UserId");
+                .HasColumnType("datetime");
+            entity.Property(e => e.Message).HasMaxLength(255);
 
-            entity.HasOne(d => d.Bro2testUser).WithMany(p => p.Bro2testNotifications)
-                .HasForeignKey(d => d.Bro2testUserId)
+            entity.HasOne(d => d.User).WithMany(p => p.Notifications)
+                .HasForeignKey(d => d.UserId)
                 .HasConstraintName("fk_Notification_User");
         });
 
-        modelBuilder.Entity<Bro2testOrder>(entity =>
+        modelBuilder.Entity<Order>(entity =>
         {
-            entity.HasKey(e => e.Bro2testOrderId).HasName("PRIMARY");
+            entity.HasKey(e => e.OrderId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_Order");
+            entity.ToTable("Order");
 
-            entity.HasIndex(e => e.Bro2testUserId, "idx_Order_UserId");
+            entity.HasIndex(e => e.UserId, "idx_Order_UserId");
 
-            entity.Property(e => e.Bro2testOrderId).HasColumnName("bro2test_OrderId");
-            entity.Property(e => e.Bro2testDateTimeOrder)
+            entity.Property(e => e.DateTimeOrder)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("datetime")
-                .HasColumnName("bro2test_DateTimeOrder");
-            entity.Property(e => e.Bro2testStatus)
+                .HasColumnType("datetime");
+            entity.Property(e => e.Status)
                 .HasDefaultValueSql("'новый'")
-                .HasColumnType("enum('новый','в обработке','завершен','отменен')")
-                .HasColumnName("bro2test_Status");
-            entity.Property(e => e.Bro2testTypeOrder)
+                .HasColumnType("enum('новый','в обработке','завершен','отменен')");
+            entity.Property(e => e.TypeOrder)
                 .HasDefaultValueSql("'касса'")
-                .HasColumnType("enum('веб-сайт','касса','WB')")
-                .HasColumnName("bro2test_TypeOrder");
-            entity.Property(e => e.Bro2testUserId).HasColumnName("bro2test_UserId");
+                .HasColumnType("enum('веб-сайт','касса','WB')");
         });
 
-        modelBuilder.Entity<Bro2testOrderComposition>(entity =>
+        modelBuilder.Entity<OrderComposition>(entity =>
         {
-            entity.HasKey(e => new { e.Bro2testProductId, e.Bro2testOrderId })
+            entity.HasKey(e => new { e.ProductId, e.OrderId })
                 .HasName("PRIMARY")
                 .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
 
-            entity.ToTable("bro2test_OrderComposition");
+            entity.ToTable("OrderComposition");
 
-            entity.HasIndex(e => e.Bro2testOrderId, "idx_OrderComposition_OrderId");
+            entity.HasIndex(e => e.OrderId, "idx_OrderComposition_OrderId");
 
-            entity.HasIndex(e => e.Bro2testProductId, "idx_OrderComposition_ProductId");
+            entity.HasIndex(e => e.ProductId, "idx_OrderComposition_ProductId");
 
-            entity.Property(e => e.Bro2testProductId).HasColumnName("bro2test_ProductId");
-            entity.Property(e => e.Bro2testOrderId).HasColumnName("bro2test_OrderId");
-            entity.Property(e => e.Bro2testPriceAtOrder)
-                .HasPrecision(10, 2)
-                .HasColumnName("bro2test_PriceAtOrder");
-            entity.Property(e => e.Bro2testQuantity)
-                .HasDefaultValueSql("'1'")
-                .HasColumnName("bro2test_Quantity");
+            entity.Property(e => e.PriceAtOrder).HasPrecision(10, 2);
+            entity.Property(e => e.Quantity).HasDefaultValueSql("'1'");
 
-            entity.HasOne(d => d.Bro2testOrder).WithMany(p => p.Bro2testOrderCompositions)
-                .HasForeignKey(d => d.Bro2testOrderId)
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderCompositions)
+                .HasForeignKey(d => d.OrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("bro2test_OrderComposition_ibfk_2");
+                .HasConstraintName("OrderComposition_ibfk_2");
 
-            entity.HasOne(d => d.Bro2testProduct).WithMany(p => p.Bro2testOrderCompositions)
-                .HasForeignKey(d => d.Bro2testProductId)
+            entity.HasOne(d => d.Product).WithMany(p => p.OrderCompositions)
+                .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("bro2test_OrderComposition_ibfk_1");
+                .HasConstraintName("OrderComposition_ibfk_1");
         });
 
-        modelBuilder.Entity<Bro2testOrderHistory>(entity =>
+        modelBuilder.Entity<OrderHistory>(entity =>
         {
-            entity.HasKey(e => e.Bro2testOrderHistoryId).HasName("PRIMARY");
+            entity.HasKey(e => e.OrderHistoryId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_OrderHistory");
+            entity.ToTable("OrderHistory");
 
-            entity.HasIndex(e => e.Bro2testOrderId, "idx_OrderHistory_OrderId");
+            entity.HasIndex(e => e.OrderId, "idx_OrderHistory_OrderId");
 
-            entity.Property(e => e.Bro2testOrderHistoryId).HasColumnName("bro2test_OrderHistoryId");
-            entity.Property(e => e.Bro2testOrderId).HasColumnName("bro2test_OrderId");
-            entity.Property(e => e.Bro2testStatus)
-                .HasColumnType("enum('новый','в обработке','завершен','отменен')")
-                .HasColumnName("bro2test_Status");
-            entity.Property(e => e.Bro2testUpdatedAt)
+            entity.Property(e => e.Status).HasColumnType("enum('новый','в обработке','завершен','отменен')");
+            entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("datetime")
-                .HasColumnName("bro2test_UpdatedAt");
+                .HasColumnType("datetime");
 
-            entity.HasOne(d => d.Bro2testOrder).WithMany(p => p.Bro2testOrderHistories)
-                .HasForeignKey(d => d.Bro2testOrderId)
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderHistories)
+                .HasForeignKey(d => d.OrderId)
                 .HasConstraintName("fk_OrderHistory_Order");
         });
 
-        modelBuilder.Entity<Bro2testProduct>(entity =>
+        modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.Bro2testProductId).HasName("PRIMARY");
+            entity.HasKey(e => e.ProductId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_Product");
+            entity.ToTable("Product");
 
-            entity.HasIndex(e => e.Bro2testCategoryId, "idx_Product_CategoryId");
+            entity.HasIndex(e => e.CategoryId, "idx_Product_CategoryId");
 
-            entity.HasIndex(e => e.Bro2testTitle, "idx_Product_Title");
+            entity.HasIndex(e => e.Title, "idx_Product_Title");
 
-            entity.Property(e => e.Bro2testProductId).HasColumnName("bro2test_ProductId");
-            entity.Property(e => e.Bro2testCategoryId).HasColumnName("bro2test_CategoryId");
-            entity.Property(e => e.Bro2testDateAdded)
+            entity.Property(e => e.DateAdded)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("datetime")
-                .HasColumnName("bro2test_DateAdded");
-            entity.Property(e => e.Bro2testDescription)
-                .HasMaxLength(500)
-                .HasColumnName("bro2test_Description");
-            entity.Property(e => e.Bro2testDiscountPercent)
-                .HasDefaultValueSql("'0'")
-                .HasColumnName("bro2test_DiscountPercent");
-            entity.Property(e => e.Bro2testPrice)
-                .HasPrecision(10, 2)
-                .HasColumnName("bro2test_Price");
-            entity.Property(e => e.Bro2testTitle)
-                .HasMaxLength(100)
-                .HasColumnName("bro2test_Title");
-            entity.Property(e => e.Bro2testWbarticul).HasColumnName("bro2test_WBArticul");
+                .HasColumnType("datetime");
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.DiscountPercent).HasDefaultValueSql("'0'");
+            entity.Property(e => e.Price).HasPrecision(10, 2);
+            entity.Property(e => e.Title).HasMaxLength(100);
+            entity.Property(e => e.Wbarticul).HasColumnName("WBArticul");
 
-            entity.HasOne(d => d.Bro2testCategory).WithMany(p => p.Bro2testProducts)
-                .HasForeignKey(d => d.Bro2testCategoryId)
+            entity.HasOne(d => d.Category).WithMany(p => p.Products)
+                .HasForeignKey(d => d.CategoryId)
                 .HasConstraintName("bro2test_FK_Category");
         });
 
-        modelBuilder.Entity<Bro2testProductAttribute>(entity =>
+        modelBuilder.Entity<ProductAttribute>(entity =>
         {
-            entity.HasKey(e => new { e.Bro2testProductId, e.Bro2testAttributesId })
+            entity.HasKey(e => new { e.ProductId, e.AttributesId })
                 .HasName("PRIMARY")
                 .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
 
-            entity.ToTable("bro2test_Product_Attributes");
+            entity.ToTable("Product_Attributes");
 
-            entity.HasIndex(e => e.Bro2testAttributesId, "idx_Product_Attributes_AttributesId");
+            entity.HasIndex(e => e.AttributesId, "idx_Product_Attributes_AttributesId");
 
-            entity.Property(e => e.Bro2testProductId).HasColumnName("bro2test_ProductId");
-            entity.Property(e => e.Bro2testAttributesId).HasColumnName("bro2test_AttributesId");
-            entity.Property(e => e.Bro2testCount)
-                .HasDefaultValueSql("'1'")
-                .HasColumnName("bro2test_Count");
-            entity.Property(e => e.Bro2testDescription)
-                .HasMaxLength(255)
-                .HasColumnName("bro2test_Description");
+            entity.Property(e => e.Count).HasDefaultValueSql("'1'");
+            entity.Property(e => e.Description).HasMaxLength(255);
 
-            entity.HasOne(d => d.Bro2testAttributes).WithMany(p => p.Bro2testProductAttributes)
-                .HasForeignKey(d => d.Bro2testAttributesId)
+            entity.HasOne(d => d.Attributes).WithMany(p => p.ProductAttributes)
+                .HasForeignKey(d => d.AttributesId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("bro2test_Product_Attributes_ibfk_2");
+                .HasConstraintName("Product_Attributes_ibfk_2");
 
-            entity.HasOne(d => d.Bro2testProduct).WithMany(p => p.Bro2testProductAttributes)
-                .HasForeignKey(d => d.Bro2testProductId)
+            entity.HasOne(d => d.Product).WithMany(p => p.ProductAttributes)
+                .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("bro2test_Product_Attributes_ibfk_1");
+                .HasConstraintName("Product_Attributes_ibfk_1");
         });
 
-        modelBuilder.Entity<Bro2testReturn>(entity =>
+        modelBuilder.Entity<Return>(entity =>
         {
-            entity.HasKey(e => e.Bro2testReturnId).HasName("PRIMARY");
+            entity.HasKey(e => e.ReturnId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_Return");
+            entity.ToTable("Return");
 
-            entity.HasIndex(e => e.Bro2testOrderId, "idx_Return_OrderId");
+            entity.HasIndex(e => e.OrderId, "idx_Return_OrderId");
 
-            entity.HasIndex(e => e.Bro2testProductId, "idx_Return_ProductId");
+            entity.HasIndex(e => e.ProductId, "idx_Return_ProductId");
 
-            entity.Property(e => e.Bro2testReturnId).HasColumnName("bro2test_ReturnId");
-            entity.Property(e => e.Bro2testOrderId).HasColumnName("bro2test_OrderId");
-            entity.Property(e => e.Bro2testProductId).HasColumnName("bro2test_ProductId");
-            entity.Property(e => e.Bro2testQuantity).HasColumnName("bro2test_Quantity");
-            entity.Property(e => e.Bro2testReason)
-                .HasMaxLength(255)
-                .HasColumnName("bro2test_Reason");
-            entity.Property(e => e.Bro2testReturnDate)
+            entity.Property(e => e.Reason).HasMaxLength(255);
+            entity.Property(e => e.ReturnDate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("datetime")
-                .HasColumnName("bro2test_ReturnDate");
+                .HasColumnType("datetime");
 
-            entity.HasOne(d => d.Bro2testOrder).WithMany(p => p.Bro2testReturns)
-                .HasForeignKey(d => d.Bro2testOrderId)
+            entity.HasOne(d => d.Order).WithMany(p => p.Returns)
+                .HasForeignKey(d => d.OrderId)
                 .HasConstraintName("fk_Return_Order");
 
-            entity.HasOne(d => d.Bro2testProduct).WithMany(p => p.Bro2testReturns)
-                .HasForeignKey(d => d.Bro2testProductId)
+            entity.HasOne(d => d.Product).WithMany(p => p.Returns)
+                .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("fk_Return_Product");
         });
 
-        modelBuilder.Entity<Bro2testReview>(entity =>
+        modelBuilder.Entity<Review>(entity =>
         {
             entity.HasKey(e => e.Bro2testReviewId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_Review");
+            entity.ToTable("Review");
 
             entity.HasIndex(e => e.Bro2testProductId, "idx_Review_ProductId");
 
@@ -411,98 +338,70 @@ public partial class ApplicationContext : DbContext
             entity.Property(e => e.Bro2testProductId).HasColumnName("bro2test_ProductId");
             entity.Property(e => e.Bro2testRating).HasColumnName("bro2test_Rating");
             entity.Property(e => e.Bro2testUserId).HasColumnName("bro2test_UserId");
-
-            entity.HasOne(d => d.Bro2testProduct).WithMany(p => p.Bro2testReviews)
-                .HasForeignKey(d => d.Bro2testProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("bro2test_Review_ibfk_1");
-
-            entity.HasOne(d => d.Bro2testUser).WithMany(p => p.Bro2testReviews)
-                .HasForeignKey(d => d.Bro2testUserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("bro2test_Review_ibfk_2");
         });
 
-        modelBuilder.Entity<Bro2testUser>(entity =>
+        modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Bro2testUserId).HasName("PRIMARY");
+            entity.HasKey(e => e.UserId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_User");
+            entity.ToTable("User");
 
-            entity.HasIndex(e => e.Bro2testEmail, "bro2test_Email").IsUnique();
+            entity.HasIndex(e => e.Email, "bro2test_Email").IsUnique();
 
-            entity.HasIndex(e => e.Bro2testUsername, "bro2test_Username").IsUnique();
+            entity.HasIndex(e => e.Username, "bro2test_Username").IsUnique();
 
-            entity.Property(e => e.Bro2testUserId).HasColumnName("bro2test_UserId");
-            entity.Property(e => e.Bro2testEmail)
-                .HasMaxLength(100)
-                .HasColumnName("bro2test_Email");
-            entity.Property(e => e.Bro2testFullName)
-                .HasMaxLength(100)
-                .HasColumnName("bro2test_FullName");
-            entity.Property(e => e.Bro2testPassword)
-                .HasMaxLength(255)
-                .HasColumnName("bro2test_Password");
-            entity.Property(e => e.Bro2testRegistrationDate)
+            entity.Property(e => e.Email).HasMaxLength(100);
+            entity.Property(e => e.FullName).HasMaxLength(100);
+            entity.Property(e => e.Password).HasMaxLength(255);
+            entity.Property(e => e.RegistrationDate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("datetime")
-                .HasColumnName("bro2test_RegistrationDate");
-            entity.Property(e => e.Bro2testUsername)
-                .HasMaxLength(50)
-                .HasColumnName("bro2test_Username");
+                .HasColumnType("datetime");
+            entity.Property(e => e.Username).HasMaxLength(50);
         });
 
-        modelBuilder.Entity<Bro2testViewHistory>(entity =>
+        modelBuilder.Entity<ViewHistory>(entity =>
         {
-            entity.HasKey(e => e.Bro2testViewId).HasName("PRIMARY");
+            entity.HasKey(e => e.ViewId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_ViewHistory");
+            entity.ToTable("ViewHistory");
 
-            entity.HasIndex(e => e.Bro2testProductId, "idx_ViewHistory_ProductId");
+            entity.HasIndex(e => e.ProductId, "idx_ViewHistory_ProductId");
 
-            entity.HasIndex(e => e.Bro2testUserId, "idx_ViewHistory_UserId");
+            entity.HasIndex(e => e.UserId, "idx_ViewHistory_UserId");
 
-            entity.Property(e => e.Bro2testViewId).HasColumnName("bro2test_ViewId");
-            entity.Property(e => e.Bro2testProductId).HasColumnName("bro2test_ProductId");
-            entity.Property(e => e.Bro2testUserId).HasColumnName("bro2test_UserId");
-            entity.Property(e => e.Bro2testViewDate)
+            entity.Property(e => e.ViewDate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("datetime")
-                .HasColumnName("bro2test_ViewDate");
+                .HasColumnType("datetime");
 
-            entity.HasOne(d => d.Bro2testProduct).WithMany(p => p.Bro2testViewHistories)
-                .HasForeignKey(d => d.Bro2testProductId)
+            entity.HasOne(d => d.Product).WithMany(p => p.ViewHistories)
+                .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("fk_ViewHistory_Product");
 
-            entity.HasOne(d => d.Bro2testUser).WithMany(p => p.Bro2testViewHistories)
-                .HasForeignKey(d => d.Bro2testUserId)
+            entity.HasOne(d => d.User).WithMany(p => p.ViewHistories)
+                .HasForeignKey(d => d.UserId)
                 .HasConstraintName("fk_ViewHistory_User");
         });
 
-        modelBuilder.Entity<Bro2testWishlist>(entity =>
+        modelBuilder.Entity<Wishlist>(entity =>
         {
-            entity.HasKey(e => e.Bro2testWishlistId).HasName("PRIMARY");
+            entity.HasKey(e => e.WishlistId).HasName("PRIMARY");
 
-            entity.ToTable("bro2test_Wishlist");
+            entity.ToTable("Wishlist");
 
-            entity.HasIndex(e => e.Bro2testProductId, "idx_Wishlist_ProductId");
+            entity.HasIndex(e => e.ProductId, "idx_Wishlist_ProductId");
 
-            entity.HasIndex(e => e.Bro2testUserId, "idx_Wishlist_UserId");
+            entity.HasIndex(e => e.UserId, "idx_Wishlist_UserId");
 
-            entity.Property(e => e.Bro2testWishlistId).HasColumnName("bro2test_WishlistId");
-            entity.Property(e => e.Bro2testCreatedAt)
+            entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasColumnType("datetime")
-                .HasColumnName("bro2test_CreatedAt");
-            entity.Property(e => e.Bro2testProductId).HasColumnName("bro2test_ProductId");
-            entity.Property(e => e.Bro2testUserId).HasColumnName("bro2test_UserId");
+                .HasColumnType("datetime");
 
-            entity.HasOne(d => d.Bro2testProduct).WithMany(p => p.Bro2testWishlists)
-                .HasForeignKey(d => d.Bro2testProductId)
+            entity.HasOne(d => d.Product).WithMany(p => p.Wishlists)
+                .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("fk_Wishlist_Product");
 
-            entity.HasOne(d => d.Bro2testUser).WithMany(p => p.Bro2testWishlists)
-                .HasForeignKey(d => d.Bro2testUserId)
+            entity.HasOne(d => d.User).WithMany(p => p.Wishlists)
+                .HasForeignKey(d => d.UserId)
                 .HasConstraintName("fk_Wishlist_User");
         });
 

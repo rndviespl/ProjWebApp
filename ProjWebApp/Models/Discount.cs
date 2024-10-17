@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ProjWebApp.Models;
 
-public partial class Bro2testDiscount
+public partial class Discount
 {
     public int Bro2testDiscountId { get; set; }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ProjWebApp.Models;
 
-public partial class Bro2testReview
+public partial class Review
 {
     public int Bro2testReviewId { get; set; }
 
@@ -16,8 +16,4 @@ public partial class Bro2testReview
     public string? Bro2testComment { get; set; }
 
     public DateTime Bro2testDateTime { get; set; }
-
-    public virtual Bro2testProduct Bro2testProduct { get; set; } = null!;
-
-    public virtual Bro2testUser Bro2testUser { get; set; } = null!;
 }
