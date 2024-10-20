@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.FileProviders;
 
 namespace ProjWebApp
 {
@@ -30,13 +31,21 @@ namespace ProjWebApp
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles(); // Это позволяет обслуживать статические файлы из wwwroot
+            // Настройка для обслуживания файлов из внешней папки
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    @"E:\projectbro\ProjWebApp\Src\images"), // Укажите полный путь к директории
+                RequestPath = "/images"
+            });
+
 
             app.UseRouting();
 
