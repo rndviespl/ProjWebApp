@@ -39,12 +39,12 @@ namespace ProjWebApp
             app.UseHttpsRedirection();
             app.UseStaticFiles(); // Это позволяет обслуживать статические файлы из wwwroot
             // Настройка для обслуживания файлов из внешней папки
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(
-                    @"E:\projectbro\ProjWebApp\Src\images"), // Укажите полный путь к директории
-                RequestPath = "/images"
-            });
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //        @"E:\projectbro\ProjWebApp\Src\images"), // Укажите полный путь к директории
+            //    RequestPath = "/images"
+            //});
 
 
             app.UseRouting();
