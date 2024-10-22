@@ -6,8 +6,6 @@
 
 <h1>Product Catalog</h1>
 
-
-
 <div class="row">
     @foreach (var product in Model)
     {
@@ -19,7 +17,7 @@
                 }
                 else
                 {
-                    <img src="~/images/default.png" alt="No Image" class="card-img-top" style="height: 225px; object-fit: cover;"> <!-- Убедитесь, что этот путь правильный -->
+                    <img src="~/images/default.png" alt="No Image" class="card-img-top" style="height: 225px; object-fit: cover;">
                 }
 
                 <div class="card-body">
@@ -30,8 +28,45 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
                             <a asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-primary">View Details</a>
+
+                            <form asp-action="AddToCart" method="post" class="ml-2" id="addToCartForm_@product.ProductId">
+                                <input type="hidden" name="productId" value="@product.ProductId" />
+                                <input type="hidden" name="userId" value="@ViewBag.CurrentUserId" />
+                                <input type="number" name="quantity" value="1" min="1" class="form-control text-center mx-1" id="quantityInput_@product.ProductId" style="width: 60px;" />
+                                <button type="submit" class="btn btn-success ml-2">Add to Cart</button>
+                            </form>
+
+                            <script>
+                                document.getElementById('addToCartForm_@product.ProductId').addEventListener('submit', function (event) {
+                                    event.preventDefault(); // Prevent the default form submission
+
+                                    var formData = new FormData(this);
+
+                                    fetch(this.action, {
+                                        method: 'POST',
+                                        body: formData
+                                    })
+                                        .then(response => {
+                                            if (!response.ok) {
+                                                throw new Error('Сетевая ошибка: ' + response.status);
+                                            }
+                                            return response.json();
+                                        })
+                                        .then(data => {
+                                            if (data.success) {
+                                                alert(data.message);
+                                                // Здесь можно обновить счетчик корзины или другие элементы на странице
+                                            } else {
+                                                alert("Ошибка при добавлении в корзину.");
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Ошибка:', error);
+                                            alert("Произошла ошибка: " + error.message);
+                                        });
+                                });
+                            </script>
                         </div>
-                        <small class="text-muted">@product.DateAdded?.ToString("MM/dd/yyyy")</small>
                     </div>
                 </div>
             </div>

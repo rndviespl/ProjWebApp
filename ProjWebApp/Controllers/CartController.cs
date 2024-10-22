@@ -1,83 +1,88 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using ProjWebApp.Data;
+using ProjWebApp.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ProjWebApp.Controllers
 {
     public class CartController : Controller
     {
-        // GET: CartController
-        public ActionResult Index()
+        private readonly ApplicationContext _context;
+
+        public CartController(ApplicationContext context)
         {
-            return View();
+            _context = context;
         }
 
-        // GET: CartController/Details/5
-        public ActionResult Details(int id)
+        // GET: Cart
+        public IActionResult Index(int userId)
         {
-            return View();
+            var cart = _context.Carts.Include(c => c.CartItems)
+                                      .ThenInclude(ci => ci.Product)
+                                      .FirstOrDefault(c => c.UserId == userId);
+
+            if (cart == null)
+            {
+                return View(new Cart());
+            }
+
+            return View(cart);
         }
 
-        // GET: CartController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: CartController/Create
+        // POST: Add to Cart
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public IActionResult AddToCart(int productId, int userId, int quantity)
         {
-            try
+            // Получаем корзину пользователя или создаем новую, если она не существует
+            var cart = _context.Carts.Include(c => c.CartItems)
+                                      .FirstOrDefault(c => c.UserId == userId)
+                                      ?? new Cart { UserId = userId, CreatedAt = DateTime.Now };
+
+            // Проверяем, есть ли уже товар в корзине
+            var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+            if (cartItem != null)
             {
-                return RedirectToAction(nameof(Index));
+                // Если товар уже есть, увеличиваем количество
+                cartItem.Quantity += quantity;
             }
-            catch
+            else
             {
-                return View();
+                // Если товара нет, добавляем новый элемент в корзину
+                cartItem = new CartItem { ProductId = productId, Quantity = quantity };
+                cart.CartItems.Add(cartItem);
             }
+
+            // Если корзина новая, добавляем ее в контекст
+            if (cart.CartId == 0)
+            {
+                _context.Carts.Add(cart);
+            }
+
+            // Сохраняем изменения в базе данных
+            _context.SaveChanges();
+
+            // Возвращаем JSON-ответ с информацией о корзине
+            return Json(new { success = true, message = "Товар добавлен в корзину." });
         }
 
-        // GET: CartController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: CartController/Edit/5
+        // POST: Remove from Cart
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public IActionResult RemoveFromCart(int cartItemId, int userId)
         {
-            try
+            var cart = _context.Carts.Include(c => c.CartItems)
+                                      .FirstOrDefault(c => c.UserId == userId);
+            if (cart != null)
             {
-                return RedirectToAction(nameof(Index));
+                var cartItem = cart.CartItems.FirstOrDefault(ci => ci.CartItemId == cartItemId);
+                if (cartItem != null)
+                {
+                    cart.CartItems.Remove(cartItem);
+                    _context.SaveChanges();
+                }
             }
-            catch
-            {
-                return View();
-            }
-        }
 
-        // GET: CartController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: CartController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Index", new { userId });
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ProjWebApp.Data;
 using ProjWebApp.Models;
+using System.Security.Claims;
 using System.Web.Helpers;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -45,9 +46,28 @@ namespace ProjWebApp.Controllers
             }
             
             ViewBag.Categories = _context.Categories.ToList();
+            ViewBag.CurrentUserId = GetCurrentUserId();
             return View(productList);
         }
 
+        // Метод для получения ID текущего пользователя
+        private int GetCurrentUserId()
+        {
+            // Проверяем, аутентифицирован ли пользователь
+            if (User.Identity.IsAuthenticated)
+            {
+                // Получаем ID пользователя из Claims
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim != null)
+                {
+                    // Преобразуем строку в int и возвращаем
+                    return int.Parse(userIdClaim.Value);
+                }
+            }
+
+            // Если пользователь не аутентифицирован, возвращаем 0 или выбрасываем исключение
+            return 0; // Или можно выбросить исключение, если это необходимо
+        }
 
         // GET: Product/Details/5
         public IActionResult Details(int id)

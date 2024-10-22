@@ -28,7 +28,6 @@
     <Folder Include="Src\Images\" />
     <Folder Include="Views\Pages\" />
     <Folder Include="Views\Shared\" />
-    <Folder Include="Views\Cart\" />
     <Folder Include="Views\Order\" />
     <Folder Include="Views\User\" />
     <Folder Include="Views\Wishlist\" />
