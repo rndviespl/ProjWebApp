@@ -9,8 +9,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNet.WebPages" Version="3.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
@@ -29,9 +31,7 @@
     <Folder Include="Views\Pages\" />
     <Folder Include="Views\Shared\" />
     <Folder Include="Views\Order\" />
-    <Folder Include="Views\User\" />
     <Folder Include="Views\Wishlist\" />
-    <Folder Include="Views\Notification\" />
     <Folder Include="Views\Review\" />
     <Folder Include="Views\Return\" />
     <Folder Include="wwwroot\css\" />

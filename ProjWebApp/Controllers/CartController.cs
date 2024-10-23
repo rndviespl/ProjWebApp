@@ -3,21 +3,34 @@ using ProjWebApp.Data;
 using ProjWebApp.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
+using System;
+using System.Threading.Tasks;
 
 namespace ProjWebApp.Controllers
 {
     public class CartController : Controller
     {
         private readonly ApplicationContext _context;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
-        public CartController(ApplicationContext context)
+        public CartController(UserManager<User> userManager, SignInManager<User> signInManager, ApplicationContext context)
         {
+            _userManager = userManager;
+            _signInManager = signInManager;
             _context = context;
         }
 
         // GET: Cart
-        public IActionResult Index(int userId)
+        public IActionResult Index()
         {
+           var userId = _userManager.GetUserId(User); // Получаем ID текущего пользователя
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Account", "User");
+            }
+
             var cart = _context.Carts.Include(c => c.CartItems)
                                       .ThenInclude(ci => ci.Product)
                                       .FirstOrDefault(c => c.UserId == userId);
@@ -30,14 +43,21 @@ namespace ProjWebApp.Controllers
             return View(cart);
         }
 
-        // POST: Add to Cart
         [HttpPost]
-        public IActionResult AddToCart(int productId, int userId, int quantity)
+        public async Task<IActionResult> AddToCart(int productId, int quantity)
         {
+            // Проверяем, авторизован ли пользователь
+            if (!_signInManager.IsSignedIn(User))
+            {
+                return Json(new { success = false, redirectUrl = Url.Action("Account", "User") });
+            }
+
+            var userId = _userManager.GetUserId(User); // Получаем ID текущего пользователя
+
             // Получаем корзину пользователя или создаем новую, если она не существует
-            var cart = _context.Carts.Include(c => c.CartItems)
-                                      .FirstOrDefault(c => c.UserId == userId)
-                                      ?? new Cart { UserId = userId, CreatedAt = DateTime.Now };
+            var cart = await _context.Carts.Include(c => c.CartItems)
+                                            .FirstOrDefaultAsync(c => c.UserId == userId)
+                                            ?? new Cart { UserId = userId, CreatedAt = DateTime.Now };
 
             // Проверяем, есть ли уже товар в корзине
             var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
@@ -54,13 +74,13 @@ namespace ProjWebApp.Controllers
             }
 
             // Если корзина новая, добавляем ее в контекст
-            if (cart.CartId == 0)
+            if (cart.CartId == null) // Убедитесь, что это условие проверяет корректно
             {
                 _context.Carts.Add(cart);
             }
 
             // Сохраняем изменения в базе данных
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             // Возвращаем JSON-ответ с информацией о корзине
             return Json(new { success = true, message = "Товар добавлен в корзину." });
@@ -68,8 +88,9 @@ namespace ProjWebApp.Controllers
 
         // POST: Remove from Cart
         [HttpPost]
-        public IActionResult RemoveFromCart(int cartItemId, int userId)
+        public IActionResult RemoveFromCart(int cartItemId)
         {
+            var userId = _userManager.GetUserId(User); // Получаем ID текущего пользователя
             var cart = _context.Carts.Include(c => c.CartItems)
                                       .FirstOrDefault(c => c.UserId == userId);
             if (cart != null)
@@ -82,7 +103,7 @@ namespace ProjWebApp.Controllers
                 }
             }
 
-            return RedirectToAction("Index", new { userId });
+            return RedirectToAction("Index");
         }
     }
 }

@@ -57,13 +57,14 @@
                                                 alert(data.message);
                                                 // Здесь можно обновить счетчик корзины или другие элементы на странице
                                             } else {
-                                                alert("Ошибка при добавлении в корзину.");
+                                                window.location.href = data.redirectUrl; // Перенаправление на страницу авторизации
                                             }
                                         })
                                         .catch(error => {
                                             console.error('Ошибка:', error);
                                             alert("Произошла ошибка: " + error.message);
                                         });
+
                                 });
                             </script>
                         </div>

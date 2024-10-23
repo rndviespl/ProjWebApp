@@ -43,6 +43,25 @@
                         </li>
                     </ul>
                     <ul class="navbar-nav">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Account">
+                                    <i class="fas fa-user"></i> Аккаунт
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <form asp-controller="User" asp-action="Logout" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-link nav-link">Выход</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Account">Вход/Register</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">
                                 <i class="fas fa-shopping-cart"></i> Корзина

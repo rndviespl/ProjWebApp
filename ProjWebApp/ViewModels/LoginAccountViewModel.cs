@@ -2,7 +2,7 @@
 
 namespace ProjWebApp.ViewModels
 {
-    public class AccountViewModel
+    public class LoginAccountViewModel
     {
         public LoginViewModel LoginViewModel { get; set; }
         public RegisterViewModel RegisterViewModel { get; set; }
@@ -16,6 +16,8 @@ namespace ProjWebApp.ViewModels
 
         [Required(ErrorMessage = "данное поле обязательно")]
         public string Password { get; set; }
+
+        public bool RememberMe { get; set; }
     }
 
     public class RegisterViewModel
@@ -26,7 +28,7 @@ namespace ProjWebApp.ViewModels
         public string Password { get; set; }
 
         [Required(ErrorMessage = "данное поле обязательно")]
-        [Compare("Password",ErrorMessage = "пароли не совпадают")]
+        [Compare("Password", ErrorMessage = "пароли не совпадают")]
         public string RepeatPassword { get; set; }
     }
 

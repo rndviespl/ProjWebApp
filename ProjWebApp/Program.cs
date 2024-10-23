@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Identity;
+using ProjWebApp.Models;
 
 namespace ProjWebApp
 {
@@ -18,9 +20,22 @@ namespace ProjWebApp
             {
                 options.MultipartBodyLengthLimit = 10485760; // 10 MB
             });
+
             builder.Services.AddDbContext<ApplicationContext>(options =>
             options.UseMySql("data source=166.1.201.241;uid=BrosShopAdm;pwd=BrosShopAdmin;database=bro2test",
             Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.39-mysql")));
+
+            builder.Services.AddIdentity<User, IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationContext>()
+            .AddDefaultTokenProviders();
+            builder.Services.AddAuthentication()
+               .AddGoogle(options =>
+               {
+                   options.ClientId = builder.Configuration["Google:ClientId"];
+                   options.ClientSecret = builder.Configuration["Google:ClientSecret"];
+               });
+
+            builder.Services.AddControllersWithViews();
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
@@ -48,7 +63,7 @@ namespace ProjWebApp
 
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

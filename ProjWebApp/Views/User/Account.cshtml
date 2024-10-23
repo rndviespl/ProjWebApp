@@ -1,0 +1,54 @@
+﻿@using ProjWebApp.ViewModels
+@model ProjWebApp.ViewModels.LoginAccountViewModel
+
+<div class="container">
+    <h2>Login</h2>
+    <form asp-action="Login" method="post">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="LoginViewModel.Login"></label>
+            <input asp-for="LoginViewModel.Login" class="form-control" />
+            <span asp-validation-for="LoginViewModel.Login" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="LoginViewModel.Password"></label>
+            <input asp-for="LoginViewModel.Password" class="form-control" type="password" />
+            <span asp-validation-for="LoginViewModel.Password" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+
+    <hr />
+
+    <h2>Register</h2>
+    <form asp-action="Register" method="post">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="RegisterViewModel.Login"></label>
+            <input asp-for="RegisterViewModel.Login" class="form-control" />
+            <span asp-validation-for="RegisterViewModel.Login" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="RegisterViewModel.Password"></label>
+            <input asp-for="RegisterViewModel.Password" class="form-control" type="password" />
+            <span asp-validation-for="RegisterViewModel.Password" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="RegisterViewModel.RepeatPassword"></label>
+            <input asp-for="RegisterViewModel.RepeatPassword" class="form-control" type="password" />
+            <span asp-validation-for="RegisterViewModel.RepeatPassword" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-success">Register</button>
+    </form>
+
+    <hr />
+
+    <h2>Or Login with Google</h2>
+    <a asp-action="LoginWithGoogle" class="btn btn-danger">Login with Google</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
